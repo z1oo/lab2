@@ -11,9 +11,8 @@ import java.util.List;
 public class Draw implements Command {
 
     public void execute(Field field,List<String> cmdArguments) throws CommandExecuteException {
-        for(String state : cmdArguments)
-            System.out.println(state);
-
+        if( cmdArguments.size() != 0 ) throw new CommandExecuteException("Error count of arguments.");
+        field.aiDraw();
     }
 
 }

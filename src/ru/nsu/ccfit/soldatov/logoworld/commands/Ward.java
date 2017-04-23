@@ -11,6 +11,7 @@ import java.util.List;
 public class Ward implements Command {
     @Override
     public void execute(Field field,List<String> cmdArguments) throws CommandExecuteException {
-
+        if( cmdArguments.size() != 0 ) throw new CommandExecuteException("Error count of arguments.");
+        field.aiWard();
     }
 }
