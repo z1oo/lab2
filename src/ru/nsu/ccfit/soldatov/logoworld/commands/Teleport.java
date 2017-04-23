@@ -10,12 +10,10 @@ import java.util.List;
 public class Teleport implements Command {
     @Override
     public void execute(Field field,List<String> cmdArguments) throws CommandExecuteException {
-        if( cmdArguments.size() != 2 ) throw new CommandExecuteException("Error count of arguments.");
-
-        try {
-            field.aiTeleport(cmdArguments);
-        }catch (Throwable e) {
-            System.err.println("Error execute command: " + e.getLocalizedMessage());
+        if( cmdArguments.size() != 2 ) {
+            throw new CommandExecuteException("Error count of arguments.");
         }
+        field.aiTeleport(cmdArguments);
+
     }
 }

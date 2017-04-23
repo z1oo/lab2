@@ -11,6 +11,15 @@ import java.util.List;
 public class Move implements Command {
     @Override
     public void execute(Field field,List<String> cmdArguments) throws CommandExecuteException {
-
+        if( cmdArguments.size() != 2 ) {
+            throw new CommandExecuteException("Error count of arguments. Use [L|R|U|D] <steps>.");
+        }
+        String arg;
+        arg = cmdArguments.get(0);
+        int steps = Integer.parseInt(cmdArguments.get(1));
+        if(arg.length() > 1 || steps < 0){
+            throw new CommandExecuteException("Error value of arguments. Use [L|R|U|D] <steps>");
+        }
+        field.aiMove(arg,steps);
     }
 }

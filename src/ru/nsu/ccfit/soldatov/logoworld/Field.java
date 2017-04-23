@@ -6,14 +6,16 @@ import ru.nsu.ccfit.soldatov.logoworld.exeptions.*;
  * Created by Zloo on 22.04.2017.
  */
 public class Field {
-    private int[][] field;
+    private char[][] field;
 
     class AI{
         private int[] coord;
+        private char oldState;
         private boolean fdraw = false;
         AI(int[] arg){
             coord = arg.clone();
-            field[coord[2]][coord[3]] = 1;
+            oldState = field[coord[2]][coord[3]];
+            field[coord[2]][coord[3]] = 'A';
         }
         void draw(){
             fdraw = true;
@@ -22,11 +24,45 @@ public class Field {
             fdraw = false;
         }
         void setCoord(int x, int y){
-            field[coord[2]][coord[3]] = 0;
+            field[coord[2]][coord[3]] = oldState;
             coord[2] = x;
             coord[3] = y;
-            field[coord[2]][coord[3]] = 1;
+            oldState = field[coord[2]][coord[3]];
+            field[coord[2]][coord[3]] = 'A';
         }
+        private void moveCoordX(char course){
+            field[coord[2]][coord[3]] = fdraw ? '0' : oldState;
+            switch (course){
+                case 'f': coord[2] = (coord[2]+1)%field.length; break;
+                case 'b': coord[2] = (coord[2]-1+ field.length)%field.length; break;
+            }
+            oldState = field[coord[2]][coord[3]];
+            field[coord[2]][coord[3]] = 'A';
+        }
+        private void moveCoordY(char course){
+            field[coord[2]][coord[3]] = fdraw ? '0' : oldState;
+            switch (course){
+                case 'f': coord[3] = (coord[3]+1)%field[0].length; break;
+                case 'b': coord[3] = ( coord[3]-1+ field[0].length)%field[0].length; break;
+            }
+            oldState = field[coord[2]][coord[3]];
+            field[coord[2]][coord[3]] = 'A';
+        }
+        void move(char axis,char course,int step){
+            switch (axis){
+                case 'x':
+                    for (int i=0; i < step;++i ){
+                        moveCoordX(course);
+                    }
+                    break;
+                case 'y':
+                    for (int i=0; i < step;++i ){
+                        moveCoordY(course);
+                    }
+                    break;
+            }
+        }
+
     }
 
     private AI ai;
@@ -39,16 +75,24 @@ public class Field {
             arg[k] = Integer.parseInt(state);
             k++;
         }
-        field = new int[arg[0]][arg[1]];
+        field = new char[arg[0]][arg[1]];
+        for (int i=0;i < field.length;++i){
+            for (int j=0;j < field[i].length;++j){
+                field[i][j] = '+';
+            }
+        }
         ai = new AI(arg);
-        for (int[] aField : field) {
-            for (int anAField : aField) {
+       printField();
+
+
+    }
+    public void printField(){
+        for (char[] aField : field) {
+            for (char anAField : aField) {
                 System.out.print(anAField + " ");
             }
             System.out.println();
         }
-
-
     }
 
     public void aiDraw(){
@@ -69,11 +113,18 @@ public class Field {
         }
         if(arg[0] >= field.length || arg[1] >= field[0].length) throw new CommandExecuteException("Error value of arguments.");
         ai.setCoord(arg[0],arg[1]);
-        for (int[] aField : field) {
-            for (int anAField : aField) {
-                System.out.print(anAField + " ");
-            }
-            System.out.println();
+        printField();
+    }
+
+    public void aiMove(String arg, int step)throws CommandExecuteException{
+        switch (arg){
+            case "L": ai.move('y','b',step);break;
+            case "R": ai.move('y','f',step);break;
+            case "D": ai.move('x','f',step);break;
+            case "U": ai.move('x','b',step);break;
+            default:
+                throw new CommandExecuteException("Error value of arguments. Use [L|R|U|D] <steps>");
         }
+        printField();
     }
 }
